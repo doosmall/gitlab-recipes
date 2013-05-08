@@ -44,23 +44,19 @@ ubuntu上的原生 gitlab安装需要完全禁止 StrictHostKeyChecking.
 
 # 1. 安装操作系统 (CentOS 6.3 Minimal)
 
-We start with a completely clean CentOS 6.3 "minimal" installation which can be accomplished by downloading the appropriate installation iso file. Just boot the system of the iso file and install the system.
+首先需要下载一个全新的 CentOS 6.3 "minimal" 系统。 如果知识测试安装可以下载centos的ISO文件用虚拟机安装
+centos6.3下载地址：http://mirrors.163.com/centos/
+VirtualBox下载：https://www.virtualbox.org/wiki/Downloads
+## 增加和更新基本的软件和服务
+### 增加 EPEL repository
 
-Note that during the installation you use the *"Configure Network"* option (it's a button in the same screen wher you speciify the hostname) to enable the *"Connect automatically"* option for the network interface and hand (usually eth0). 
-**If you forget this option the network will NOT start at boot.**
-
-The end result is a bare minimum CentOS installation that effectively only has network connectivity and no services at all.
-
-## Updating and adding basic software and services
-### Add EPEL repository
-
-*logged in as root*
+*登陆到root账号*
 
     rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 
-### Install the required tools for gitlab and gitolite
+### 安装 gitlab 和 gitolite 需要的工具
 
-*logged in as root*
+*登陆到root账号*
 
     yum -y groupinstall 'Development Tools'
 
@@ -73,45 +69,43 @@ The end result is a bare minimum CentOS installation that effectively only has n
                    mysql-devel crontabs logwatch logrotate sendmail-cf qtwebkit qtwebkit-devel \
                    perl-Time-HiRes
 
-**IMPORTANT NOTE About Redhat EL 6** 
+**关于 Redhat EL 6** 
 
-During an installation on an official RHEL 6.3 we found that some packages (in our case gdbm-devel, libffi-devel and libicu-devel) were NOT installed. You MUST make sure that all the packages are installed. The simplest way is to run the above command for a second time and you'll see quite easily of everything is either already installed or "No package XXX available". When you run into this issue you can try installing these required packages from the CentOS distribution.
 
-### Update CentOS to the latest set of patches
+### 更新 CentOS 到最新
 
-*logged in as root*
+*登陆到root账号*
 
     yum -y update
 
-## Configure redis
-Just make sure it is started at the next reboot
+## 配置 redis
+确保redis在下次重启系统时可以自动运行
 
-*logged in as root*
+*登陆到root账号*
 
     chkconfig redis on
     service redis start
 
-## Configure mysql
-Make sure it is started at the next reboot and start it immediately so we can configure it.
+## 配置 mysql
+确保MySQL在下次重启系统时可以自动运行。
 
-*logged in as root*
+*登陆到root账号*
 
     chkconfig mysqld on
     service mysqld start
 
-Secure MySQL by entering a root password and say "Yes" to all questions with the next command
+配置 MySQL ， 设置MySQL root账号的密码，根据提示一路"Yes" 
 
     /usr/bin/mysql_secure_installation
 
-## Configure httpd
+## 配置 httpd
 
-We use Apache HTTPD in front of gitlab
-Just make sure it is started at the next reboot
+我们用 Apache 作为gitlab的前端
+确保Apache在下次重启系统时可以自动运行。
 
     chkconfig httpd on
 
-We want to be able to reach gitlab using the normal http ports (i.e. not the :3000 thing)
-So we create a file called **/etc/httpd/conf.d/gitlab.conf** with this content (replace the git.example.org with your hostname!!). 
+创建文件 **/etc/httpd/conf.d/gitlab.conf** ，并且增加下面的内容(替换 git.example.org 为你的域名!!). 
 
     <VirtualHost *:80>
       ServerName git.example.org
@@ -125,18 +119,17 @@ So we create a file called **/etc/httpd/conf.d/gitlab.conf** with this content (
         ProxyPassReverse / http://localhost:3000/
     </VirtualHost>
 
-OPTIONAL: If you want to run other websites on the same system you'll need to enable in **/etc/httpd/conf/httpd.conf** the setting
+注: 如果还有其他web站点在同一台服务器上，你需要在 **/etc/httpd/conf/httpd.conf** 如下配置
 
     NameVirtualHost *:80
 
-Poke an selinux hole for httpd so it can httpd can be in front of gitlab
+还要配置 selinux 
 
     setsebool -P httpd_can_network_connect on
 
-## Configure firewall
+## 配置防火墙
 
-Poke an iptables hole so uses can access the httpd (http and https ports) and ssh.
-The quick way is to put this in the file called **/etc/sysconfig/iptables**
+   修改 **/etc/sysconfig/iptables** 增加如下内容
 
     # Firewall configuration written by system-config-firewall
     # Manual customization of this file is not recommended.
@@ -154,39 +147,37 @@ The quick way is to put this in the file called **/etc/sysconfig/iptables**
     -A FORWARD -j REJECT --reject-with icmp-host-prohibited
     COMMIT
 
-## Configure email
+## 配置 email
 
     cd /etc/mail
     vim /etc/mail/sendmail.mc
 
-Add a line with the smtp gateway hostname
+增加一行 smtp gateway hostname
 
     define(`SMART_HOST', `smtp.example.com')dnl
 
-Then comment out this line 
+注释掉下面这行
 
     EXPOSED_USER(`root')dnl
 
-by putting 'dnl ' in front of it like this
+至于奥在这行前面增加 'dnl ' 如：
 
     dnl EXPOSED_USER(`root')dnl
  
-Now enable these settings
+启用这个配置
 
     make
     chkconfig sendmail on
 
 
-## Reboot
-Now that we have the basics right we reboot the system to load the new kernel and everything.
-After the reboot all of the so far installed services will startup automatically.
+## 重启系统
 
     reboot
 
 ----------
 
-# 2. Ruby
-Download and compile it:
+# 2. 安装Ruby
+下载和编译:
 
 *logged in as root*
 
