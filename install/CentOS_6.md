@@ -1,13 +1,13 @@
-**This installation guide was created for CentOS 6.3 in combination with gitlab 4.0 and tested on it.**
-We also tried this on RHEL 6.3 and found that there are subtle differences that we so far have only documeted in part.
+**centos6.3上安装 gitlab4.0。**
+我们也在RHEL 6.3 进行了安装测试，到目前发现并记录了一些不同。
 
-Please read `doc/install/requirements.md` for hardware and platform requirements.
+阅读 `doc/install/requirements.md` 了解安装gitlab4.0时硬件和平台环境的要求。
 
-## Overview ##
-This guide installs gitlab on a bare system from scratch using MySQL as the database. All Postgress installation steps are absent as they have not been tested yet.
+## 概述 ##
+本文主要介绍在一个全新的操作系统上安装基于MySQL数据库的 gitlab4.0。
 
-**Important Note:**
-The following steps have been known to work.
+**重要提示：**
+本文的安装步骤测试能够正常执行.
 If you deviate from this guide, do it with caution and make sure you don't
 violate any assumptions GitLab makes about its environment.
 For things like AWS installation scripts, init scripts or config files for
