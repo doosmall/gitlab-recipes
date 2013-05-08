@@ -45,8 +45,10 @@ ubuntu上的原生 gitlab安装需要完全禁止 StrictHostKeyChecking.
 # 1. 安装操作系统 (CentOS 6.3 Minimal)
 
 首先需要下载一个全新的 CentOS 6.3 "minimal" 系统。 如果知识测试安装可以下载centos的ISO文件用虚拟机安装
-centos6.3下载地址：http://mirrors.163.com/centos/
-VirtualBox下载：https://www.virtualbox.org/wiki/Downloads
+
+1.centos6.3下载地址：http://mirrors.163.com/centos/
+2.VirtualBox下载：https://www.virtualbox.org/wiki/Downloads
+
 ## 增加和更新基本的软件和服务
 ### 增加 EPEL repository
 
