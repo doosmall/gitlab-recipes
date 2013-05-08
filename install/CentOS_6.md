@@ -1,53 +1,47 @@
-**centos6.3上安装 gitlab4.0。**
-我们也在RHEL 6.3 进行了安装测试，到目前发现并记录了一些不同。
+**centos6.3上 gitlab4.0安装指南。**
+在RHEL 6.3 上也进行了安装测试，到目前发现并记录了一些不同。
 
 阅读 `doc/install/requirements.md` 了解安装gitlab4.0时硬件和平台环境的要求。
 
 ## 概述 ##
 本文主要介绍在一个全新的操作系统上安装基于MySQL数据库的 gitlab4.0。
 
-**重要提示：**
+**提示：**
 本文的安装步骤测试能够正常执行.
-If you deviate from this guide, do it with caution and make sure you don't
-violate any assumptions GitLab makes about its environment.
-For things like AWS installation scripts, init scripts or config files for
-alternative web server have a look at the "Advanced Setup Tips" section.
+也可以不按照本文的步骤进行安装，但是要遵照gitlab4.0约定的运行环境进行安装(如果你了解的话)。
+在AWS上安装或者其他web服务器的配置等请参考"高级技巧" 章节.
 
-**Important Note:**
-If you find a bug/error in this guide please submit an issue or pull request
-following the contribution guide (see `CONTRIBUTING.md`).
+**提示：**
+如果发现本文的错误还请提交给给我们
 
-**Note about accounts:**
-In most cases you are required to run commands as the 'root' user.
-When it is required you should be either the 'git' or 'gitlab' user it will be indicated with a line like this
+**重要提示：**
+绝大多数情况下，你需要用系统root用户执行命令。
+需要的时候你需要切换到'git' 或者 'gitlab' 用户上执行命令，
 
-*logged in as gitlab*
-
-The best way to become that user is by logging in as root and typing
-
+从root用户切换到其它用户用下面的命令，如：
     su - gitlab
 
-**Note about security:**
-Many setup guides of Linux software simply state: "disable selinux and firewall".
-The original gitlab installation for ubuntu disables StrictHostKeyChecking completely.
-This guide does not disable any of them, we simply configure them as they were intended.
+**安全提示：**
+很多Linux上的软件安装教程简单的规定: "禁止 selinux 和 防火墙".
+ubuntu上的原生 gitlab安装需要完全禁止 StrictHostKeyChecking.
+而本安装教程不需要禁止任何安全项，我们只需要按照安全策略简单的进行配置.
 
 - - -
 
-# Overview
+# 安装概要
 
-The GitLab installation consists of setting up the following components:
+ GitLab的安装主要有下列组件的安装构成：
 
-1. Installing the base operating system (CentOS 6.3 Minimal) and Packages / Dependencies
-2. Ruby
-3. System Users
-4. Gitolite
-5. GitLab
+1. 安装操作系统 (如CentOS 6.3 Minimal) 和依赖库（ Packages / Dependencies）
+2. 安装Ruby
+3. 创建系统用户
+4. 安装Gitolite
+5. 安装GitLab
 
 
 ----------
 
-# 1. Installing the operating system (CentOS 6.3 Minimal)
+# 1. 安装操作系统 (CentOS 6.3 Minimal)
 
 We start with a completely clean CentOS 6.3 "minimal" installation which can be accomplished by downloading the appropriate installation iso file. Just boot the system of the iso file and install the system.
 
