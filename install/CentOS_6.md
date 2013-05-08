@@ -190,7 +190,7 @@ ubuntu上的原生 gitlab安装需要完全禁止 StrictHostKeyChecking.
     make
     make install
 
-Install the Bundler Gem:
+安装 Bundler Gem:
 
 *登陆到root账号*
 
@@ -198,9 +198,9 @@ Install the Bundler Gem:
 
 ----------
 
-# 3. System Users
+# 3. 增加系统用户
 
-## Create users for Git and Gitolite
+## 为 Git and Gitolite 增加用户
 *登陆到root账号*
 
     adduser \
@@ -220,64 +220,47 @@ Install the Bundler Gem:
 
     usermod -a -G git gitlab 
 
-Because the gitlab user will need a password later on, we configure it right now, so we are finished with all the user stuff.
-
+稍后gitlab这个用户需要用到密码，我们现在给gitlab设置一个登陆密码
     passwd gitlab # please choose a good password :)  
 
 *登陆到root账号*
 
-    # Generate the SSH key
+    # 生成 SSH key
     sudo -u gitlab -H ssh-keygen -q -N '' -t rsa -f /home/gitlab/.ssh/id_rsa
 
-## Forwarding all emails
-
-Now we want all logging of the system to be forwarded to a central email address
-
-*登陆到root账号*
-
-    echo adminlogs@example.com > /root/.forward
-    chown root /root/.forward
-    chmod 600 /root/.forward
-    restorecon /root/.forward
-
-    echo adminlogs@example.com > /home/gitlab/.forward
-    chown gitlab /home/gitlab/.forward
-    chmod 600 /home/gitlab/.forward
-    restorecon /home/gitlab/.forward
+ 
     
 ----------
 
-# 4. Gitolite
+# 4. 安装Gitolite
 
-## Clone GitLab's fork of the Gitolite source code:
+## 获取 GitLab 的源码:
 
 *登陆到root账号*
 
     cd /home/git
     sudo -u git -H git clone -b gl-v320 https://github.com/gitlabhq/gitolite.git /home/git/gitolite
 
-## Setup Gitolite with GitLab as its admin:
+## 设置GitLab为 Gitolite 的管理员:
 
-**Important Note:**
-GitLab assumes *full and unshared* control over this Gitolite installation.
 
 *登陆到root账号*
 
-    # Add Gitolite scripts to $PATH
+    # 添加 Gitolite 脚本到环境变量
     sudo -u git -H mkdir /home/git/bin
     sudo -u git -H sh -c 'printf "%b\n%b\n" "PATH=\$PATH:/home/git/bin" "export PATH" >> /home/git/.profile'
     sudo -u git -H sh -c 'gitolite/install -ln /home/git/bin'
 
-    # Copy the gitlab user's (public) SSH key ...
+    # 复制 gitlab用户的公钥（ SSH key） ...
     cp /home/gitlab/.ssh/id_rsa.pub /home/git/gitlab.pub
     chmod 0444 /home/git/gitlab.pub
 
-    # ... and use it as the admin key for the Gitolite setup
+    # ...用和上面的公钥作为安装Gitolite的管理员公钥
     sudo -u git -H sh -c "PATH=/home/git/bin:$PATH; gitolite setup -pk /home/git/gitlab.pub"
 
-### Fix the directory permissions for the configuration directory:
+### 确包配置文件的所属权限:
 
-    # Make sure the Gitolite config dir is owned by git
+    # 确保git用户有Gitolite配置目录的所有权限
     chmod 750 /home/git/.gitolite/
     chown -R git:git /home/git/.gitolite/
 
