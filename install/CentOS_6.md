@@ -46,8 +46,8 @@ ubuntu上的原生 gitlab安装需要完全禁止 StrictHostKeyChecking.
 
 首先需要下载一个全新的 CentOS 6.3 "minimal" 系统。 如果知识测试安装可以下载centos的ISO文件用虚拟机安装
 
-1.centos6.3下载地址：http://mirrors.163.com/centos/
-2.VirtualBox下载：https://www.virtualbox.org/wiki/Downloads
+1. centos6.3下载地址：http://mirrors.163.com/centos/
+2. VirtualBox下载：https://www.virtualbox.org/wiki/Downloads
 
 ## 增加和更新基本的软件和服务
 ### 增加 EPEL repository
@@ -71,8 +71,7 @@ ubuntu上的原生 gitlab安装需要完全禁止 StrictHostKeyChecking.
                    mysql-devel crontabs logwatch logrotate sendmail-cf qtwebkit qtwebkit-devel \
                    perl-Time-HiRes
 
-**关于 Redhat EL 6** 
-
+ 
 
 ### 更新 CentOS 到最新
 
@@ -181,7 +180,7 @@ ubuntu上的原生 gitlab安装需要完全禁止 StrictHostKeyChecking.
 # 2. 安装Ruby
 下载和编译:
 
-*logged in as root*
+*登陆到root账号*
 
     mkdir /tmp/ruby && cd /tmp/ruby
     wget http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-1.9.3-p327.tar.gz
@@ -193,7 +192,7 @@ ubuntu上的原生 gitlab安装需要完全禁止 StrictHostKeyChecking.
 
 Install the Bundler Gem:
 
-*logged in as root*
+*登陆到root账号*
 
     gem install bundler
 
@@ -202,7 +201,7 @@ Install the Bundler Gem:
 # 3. System Users
 
 ## Create users for Git and Gitolite
-*logged in as root*
+*登陆到root账号*
 
     adduser \
       --system \
@@ -225,7 +224,7 @@ Because the gitlab user will need a password later on, we configure it right now
 
     passwd gitlab # please choose a good password :)  
 
-*logged in as root*
+*登陆到root账号*
 
     # Generate the SSH key
     sudo -u gitlab -H ssh-keygen -q -N '' -t rsa -f /home/gitlab/.ssh/id_rsa
@@ -234,7 +233,7 @@ Because the gitlab user will need a password later on, we configure it right now
 
 Now we want all logging of the system to be forwarded to a central email address
 
-*logged in as root*
+*登陆到root账号*
 
     echo adminlogs@example.com > /root/.forward
     chown root /root/.forward
@@ -252,7 +251,7 @@ Now we want all logging of the system to be forwarded to a central email address
 
 ## Clone GitLab's fork of the Gitolite source code:
 
-*logged in as root*
+*登陆到root账号*
 
     cd /home/git
     sudo -u git -H git clone -b gl-v320 https://github.com/gitlabhq/gitolite.git /home/git/gitolite
@@ -262,7 +261,7 @@ Now we want all logging of the system to be forwarded to a central email address
 **Important Note:**
 GitLab assumes *full and unshared* control over this Gitolite installation.
 
-*logged in as root*
+*登陆到root账号*
 
     # Add Gitolite scripts to $PATH
     sudo -u git -H mkdir /home/git/bin
@@ -293,7 +292,7 @@ GitLab assumes *full and unshared* control over this Gitolite installation.
 
 ### Make the git account known and allowed to the gitlab user
 
-*logged in as root*
+*登陆到root账号*
 
     su - gitlab
 
