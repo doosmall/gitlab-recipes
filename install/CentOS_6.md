@@ -415,81 +415,45 @@ ubuntu上的原生 gitlab安装需要完全禁止 StrictHostKeyChecking.
     bundle exec rake gitlab:app:setup RAILS_ENV=production
 
 
-## Install Init Script
+## 安装启动脚本
 
-Download the init script (will be /etc/init.d/gitlab)
-
-*logged in as **gitlab***
-
-    logout
-
-*logged in as root*
+下载启动脚本
+ 
+ 
+*登陆到用户 root*
 
     curl https://raw.github.com/gitlabhq/gitlab-recipes/4-0-stable/init.d/gitlab-centos > /etc/init.d/gitlab
     chmod +x /etc/init.d/gitlab
     chkconfig --add gitlab
-
-Make GitLab start on boot:
-
     chkconfig gitlab on
 
-Start your GitLab instance:
+启动gitlab服务:
 
     service gitlab start
-    # or
+    # 或者
     /etc/init.d/gitlab start
 
-## Check Application Status
+## 检测服务状态
+ 
 
-Check if GitLab and its environment is configured correctly:
+*登陆到用户 **gitlab***
 
     su - gitlab
-
-*logged in as **gitlab***
 
     cd /home/gitlab/gitlab
     bundle exec rake gitlab:env:info RAILS_ENV=production
 
-To make sure you didn't miss anything run a more thorough check with:
 
     cd /home/gitlab/gitlab
     bundle exec rake gitlab:check RAILS_ENV=production
 
-If you are all green: congratulations, you successfully installed GitLab!
-Although this is the case, there are still a few steps to go.
+如果你看到结果都是绿色显示的， 那么恭喜你，你成功的安装了Gitlab!
 
-# Done!
 
-Visit YOUR_SERVER for your first GitLab login.
-The setup has created an admin account for you. You can use it to log in:
-
+现在访问你的域名，体验下属于你自己的Gitlab吧！
+Gitlab默认的管理员账号是
     admin@local.host
     5iveL!fe
 
-**Important Note:**
-Please go over to your profile page and immediately change the password, so
-nobody can access your GitLab by using this login information later on.
-
-**Enjoy!**
-
-
-- - -
-
-
-# Advanced Setup Tips
-
-## Custom Redis Connection
-
-If you'd like Resque to connect to a Redis server on a non-standard port or on
-a different host, you can configure its connection string via the
-`config/resque.yml` file.
-
-    # example
-    production: redis.example.tld:6379
-
-
-## User-contributed Configurations
-
-You can find things like  AWS installation scripts, init scripts or config files
-for alternative web server in our [recipes collection](https://github.com/gitlabhq/gitlab-recipes/).
+ 
 
