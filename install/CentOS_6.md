@@ -273,92 +273,90 @@ ubuntu上的原生 gitlab安装需要完全禁止 StrictHostKeyChecking.
     # Make sure the gitlab user can access the required directories
     chmod g+x /home/git
 
-### Make the git account known and allowed to the gitlab user
+### 配置git客户端，增加gitlab里的账户
 
 *登陆到root账号*
 
     su - gitlab
 
-*logged in as **gitlab***    
+*登陆到用户**gitlab***    
     
     ssh git@localhost  # type 'yes' and press <Enter>.
 
-The expected behaviour is that you get a message similar to this and then immediately the connection is closed again:
+顺利的话你会获得类似下面的结果，并且连接关闭:
 
     PTY allocation request failed on channel 0
     hello gitlab, this is git@gitlab running gitolite3 v3.2-gitlab-patched-0-g2d29cf7 on git 1.7.1
 
-## Test if everything works so far
-*logged in as **gitlab***
+## 测试工作是否正常
+*登陆到用户 **gitlab***
 
-    # Clone the admin repo so SSH adds localhost to known_hosts ...
-    # ... and to be sure your users have access to Gitolite
+    # 克隆用户 admin 的 仓库  ...
+    # ... 并且确认用户是否有权访问 Gitolite
     git clone git@localhost:gitolite-admin.git /tmp/gitolite-admin
 
-    # If it succeeded without errors you can remove the cloned repo
+    # 如果没有任何问题你可以删除刚才克隆的仓库
     rm -rf /tmp/gitolite-admin
 
-**Important Note:**
-If you can't clone the `gitolite-admin` repository: **DO NOT PROCEED WITH INSTALLATION**!
-Check the [Trouble Shooting Guide](https://github.com/gitlabhq/gitlab-public-wiki/wiki/Trouble-Shooting-Guide)
-and make sure you have followed all of the above steps carefully.
+**提示：**
+如果上面检测没有成功 : **先暂时停止安装步骤**!
+检查 [问题列表](https://github.com/gitlabhq/gitlab-public-wiki/wiki/Trouble-Shooting-Guide)
+并确保上面的步骤都正确执行.
 
 ----------
-# 5. GitLab
+# 5. 安装GitLab
 
-*logged in as gitlab*
+*登陆到用户 gitlab*
 
-    # We'll install GitLab into home directory of the user "gitlab"
+    #我们将把 GitLab 安装到用户 "gitlab" 的家目录
     cd /home/gitlab
 
-## Clone the Source
+## 克隆Gitlab源码
 
-    # Clone GitLab repository
+    # 克隆Gitlab源码
     git clone https://github.com/gitlabhq/gitlabhq.git gitlab
 
-    # Go to gitlab dir 
+    # 进入到 gitlab 目录 
     cd /home/gitlab/gitlab
    
-    # Checkout to stable release
+    # 检出稳定版
     git checkout 4-0-stable
 
-**Note:**
-You can change `4-0-stable` to `master` if you want the *bleeding edge* version, but
-do so with caution!
+**提示：**
+如果你想体验开发版本，你可以吧 `4-0-stable` 改为 `master` 不建议这样做，会遇到很多麻烦!
 
-## Configure it
+## 配置Gitlab
 
-Copy the example GitLab config
+复制GitLab 的配置实例
 
     cp /home/gitlab/gitlab/config/gitlab.yml{.example,}
 
-Edit the gitlab config to make sure to change "localhost" to the fully-qualified domain name of your host serving GitLab where necessary. Also review the other settings to match your setup.
+把配置文件中的 "localhost"改为你自己的域名. 顺带检测下其他配置.
 
     vim /home/gitlab/gitlab/config/gitlab.yml
 
-Copy the example Unicorn config
+复制 Unicorn 的配置实例
     cp /home/gitlab/gitlab/config/unicorn.rb{.example,}
 
-Edit the unicorn config
+编辑unicorn 配置
 
     vim /home/gitlab/gitlab/config/unicorn.rb
 
-Change the listen parameter so that it reads:
+在最下面增加一行:
 
     listen "127.0.0.1:3000"  # listen to port 3000 on the loopback interface
 
-Also review the other settings to match your setup.
-
-## Configure GitLab DB settings
+ 
+## Gitlab的数据库配置
 
     # MySQL
     cp /home/gitlab/gitlab/config/database.yml{.mysql,}
 
-Edit the database config and set the correct username/password
+编辑数据库配置，填写正确的数据库用户名密码等
 
     vim /home/gitlab/gitlab/config/database.yml
 
-The config should look something like this (where supersecret is replaced with your real password):
+数据库配置大致如下:
 
     production:
       adapter: mysql2
@@ -366,17 +364,14 @@ The config should look something like this (where supersecret is replaced with y
       reconnect: false
       database: gitlabhq_production
       pool: 5
-      username: gitlab
-      password: supersecret
+      username: 数据库用户名
+      password: 数据库密码
       # host: localhost
       # socket: /tmp/mysql.sock
     
-## Install Gems
-*logged in as **gitlab***
+## 安装 Gems
 
-    logout
-
-*logged in as **root***
+*登陆到用户 **root***
 
     cd /home/gitlab/gitlab
 
@@ -384,47 +379,41 @@ The config should look something like this (where supersecret is replaced with y
 
     su - gitlab
 
-*logged in as **gitlab***
+*登陆到用户 **gitlab***
 
     cd /home/gitlab/gitlab
 
     # For mysql db
     bundle install --deployment --without development test postgres
 
-## Configure Git
+## 配置 Git
 
-GitLab needs to be able to commit and push changes to Gitolite. In order to do
-that Git requires a username and email. (We recommend using the same address
-used for the `email.from` setting in `config/gitlab.yml`)
+ Git客户端需要用户名和邮箱 。. (账号配置见`config/gitlab.yml`)
 
-*logged in as gitlab*
+*登陆到用户gitlab*
 
     git config --global user.name "GitLab"
     git config --global user.email "gitlab@localhost"
 
-## Setup GitLab Hooks
-*logged in as **gitlab***
+## 设置 GitLab 钩子
+ 
 
-    logout
-
-*logged in as **root***
+*登陆到用户 **root***
 
     cd /home/gitlab/gitlab
     cp ./lib/hooks/post-receive /home/git/.gitolite/hooks/common/post-receive
     chown git:git /home/git/.gitolite/hooks/common/post-receive
 
-## Initialise Database and Activate Advanced Features
+## 初始化数据库 和激活高级功能
 
-*logged in as **root***
+*登陆到用户 **gitlab***
 
     su - gitlab
 
-*logged in as **gitlab***
-
+ 
     cd /home/gitlab/gitlab
     bundle exec rake gitlab:app:setup RAILS_ENV=production
 
-The previous command will ask you for the root password of the mysql database and create the defined database and user.
 
 ## Install Init Script
 
