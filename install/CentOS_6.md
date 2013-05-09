@@ -264,7 +264,7 @@ ubuntu上的原生 gitlab安装需要完全禁止 StrictHostKeyChecking.
     chmod 750 /home/git/.gitolite/
     chown -R git:git /home/git/.gitolite/
 
-### Fix the directory permissions for the repositories:
+### 设置repositories目录权限:
 
     # Make sure the repositories dir is owned by git and it stays that way
     chmod -R ug+rwXs,o-rwx /home/git/repositories/
